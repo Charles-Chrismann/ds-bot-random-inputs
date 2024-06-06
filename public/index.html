@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <canvas id="mainCanvas" width="160" height="144"></canvas>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const canvas = document.querySelector('#mainCanvas')
+    const ctx = canvas.getContext('2d');
+    const ctx_data = ctx.createImageData(160, 144);
+
+    const socket = io();
+    socket.on('frame', (data) => {
+      console.log(data)
+      for (let i = 0; i < data.length; i++){
+        ctx_data.data[i] = data[i];
+      }
+      ctx.putImageData(ctx_data, 0, 0);
+    })
+    socket.on('diff', (data) => {
+      console.log(data)
+      for (let i = 0; i < data.length; i+= 2){
+        for(let j = 0; j < data[i + 1].length; j++) {
+          ctx_data.data[data[i + 1][j]] = data[i];
+        }
+      }
+      ctx.putImageData(ctx_data, 0, 0);
+    })
+  </script>
+</body>
+</html>
