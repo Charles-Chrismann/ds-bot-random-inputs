@@ -1,0 +1,1 @@
+export {default as INPUTS} from './inputs.contant'
