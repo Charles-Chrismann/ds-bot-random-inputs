@@ -1,24 +1,18 @@
 import 'dotenv/config'
+import { createServer } from "http";
 import express from "express";
 import { Server } from "socket.io";
-import EmulatorWrapper from "./EmulatorWrapper";
-import { createServer } from "http";
 import { CronJob } from "cron";
-import Discord from "./Discord";
-import * as fs from 'fs'
+import sanitizer from 'sanitizer'
+import EmulatorWrapper from "./EmulatorWrapper";
 import inputs from './inputs'
 import Gameboy from 'serverboy'
-import sanitizer from 'sanitizer'
+import { EnvService, FileService, DiscordService } from './services';
 
 const PORT = process.env.PORT || 3000
 const emu = new EmulatorWrapper()
-if(fs.existsSync(process.env.BACKUP_PATH as string)) {
-  const memory = JSON.parse(fs.readFileSync(process.env.BACKUP_PATH as string).toString())
-  emu.loadBackup(memory)
-}
-if(!fs.existsSync(process.env.CHAT_PATH as string)) {
-  fs.writeFileSync(process.env.CHAT_PATH as string, '[]')
-}
+FileService.loadBackupIfNotExist(emu)
+FileService.createChatFileIfNotExist()
 
 const app = express()
 const server = createServer(app)
@@ -33,15 +27,12 @@ io.on('connection', (socket) => {
   socket.emit('frame', lastSentFrame ?? emu.gameboy.getScreen())
 
   io.emit("viewer join", io.engine.clientsCount)
-  const chatHistory = JSON.parse(fs.readFileSync(process.env.CHAT_PATH as string).toString())
-  io.emit("chat history", chatHistory)
+  io.emit("chat history", FileService.chat)
 
   socket.on("chat", (data: {user: string, message: string}) => {
     const messageObj = {user: sanitizer.escape(data.user), message: sanitizer.escape(data.message)}
     io.emit("chat", messageObj)
-    const chat = JSON.parse(fs.readFileSync(process.env.CHAT_PATH as string).toString()) as {user: string, message: string}[]
-    chat.push(messageObj)
-    fs.writeFileSync(process.env.CHAT_PATH as string, JSON.stringify(chat))
+    FileService.pushChat(messageObj)
   })
 
   socket.on('disconnect', () => {
@@ -62,7 +53,7 @@ const job = new CronJob(
 	async () => {
     const file = await emu.render()
     emu.createBackup()
-    Discord.sendImage(file, process.env.DISCORD_CHANNEL_ID as string)
+    DiscordService.sendImage(file, EnvService['DISCORD_CHANNEL_ID'])
 	},
   null,
   true

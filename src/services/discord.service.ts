@@ -1,4 +1,4 @@
-class Discord {
+class DiscordService {
   static async sendImage(file: Buffer, channelId: string) {
 
     const attachementRes = await fetch(`https://discord.com/api/v9/channels/${channelId}/attachments`, {
@@ -51,4 +51,4 @@ class Discord {
   }
 }
 
-export default Discord
+export default DiscordService
