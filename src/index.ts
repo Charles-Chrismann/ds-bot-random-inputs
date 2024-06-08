@@ -17,7 +17,7 @@ if(fs.existsSync(process.env.BACKUP_PATH as string)) {
   emu.loadBackup(memory)
 }
 if(!fs.existsSync(process.env.CHAT_PATH as string)) {
-  fs.writeFileSync(process.env.CHAT_PATH as string, '')
+  fs.writeFileSync(process.env.CHAT_PATH as string, '[]')
 }
 
 const app = express()
