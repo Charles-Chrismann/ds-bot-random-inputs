@@ -1,0 +1,150 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: arial, sans-serif;
+}
+
+main {
+  height: 100dvh;
+  width: 100dvw;
+  padding: 1rem;
+  display: flex;
+  flex-flow: column;
+  flex-direction: column;
+  background: #d82234;
+  gap: 1rem;
+}
+
+.canvasContainer {
+  padding: .5rem;
+  background-color: #545c66;
+  border-radius: 4px;
+  flex: 0 1 auto;
+  display: inline-block;
+}
+
+canvas {
+  image-rendering: pixelated;
+  width: 100%;
+  max-height: max-content;
+  display: block;
+}
+
+@media screen and (orientation:landscape) and (max-device-width: 640px) {
+  main {
+    flex-direction: row;
+  }
+
+  canvas {
+    height: 100%;
+    width: auto;
+  }
+}
+
+.bottom {
+  display: flex;
+  flex-flow: column;
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.viewer-data {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;
+  margin-bottom: .5rem;
+}
+
+.viewer-data-count {
+  display: flex;
+  justify-content: end;
+  gap: .25rem;
+  color: #2faefd;
+  font-size: 20px;
+}
+
+div.chat {
+  width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: scroll;
+  gap: 1rem;
+}
+
+.chat form {
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chat form input {
+  height: 48px;
+  background: white;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  padding-left: .5rem;
+}
+
+.chat form button {
+  height: 48px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background: white;
+  border-radius: 4px;
+  background: #2faefd;
+  border-top: none;
+  border-left: none;
+  border-right: 2px #2585c0 solid;
+  border-bottom: 4px #1a5c85 solid;
+}
+
+.chat form:not(:invalid) button:active {
+  border-right: 1px #2585c0 solid;
+  border-bottom: 2px #1a5c85 solid;
+  margin-left: 1px;
+}
+
+.chat form:invalid button {
+  cursor: not-allowed;
+}
+
+.chat form .username-submit {
+  display: flex;
+  gap: 0.5rem;
+}
+
+ul.chat {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: scroll;
+  border: solid 1px #000;
+  padding: .25rem;
+  border-radius: .5rem;
+  gap: .25rem;
+}
+
+ul.chat li {
+  background-color: white;
+  padding: .5rem;
+  border-radius: .25rem;
+}
+
+@media screen and (min-width: 600px) {
+  main {
+    flex-direction: row;
+  }
+
+  .canvasContainer {
+    height: 100%;
+  }
+
+  canvas {
+    height: 100%;
+    width: auto;
+  }
+}

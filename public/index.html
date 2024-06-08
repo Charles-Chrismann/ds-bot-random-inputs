@@ -4,14 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <canvas id="mainCanvas" width="160" height="144"></canvas>
+  <main>
+    <div class="canvasContainer">
+      <canvas id="mainCanvas" width="160" height="144"></canvas>
+    </div>
+    <div class="bottom">
+      <div class="viewer-data">
+        <div class="viewer-data-count">
+          <i class="fa-solid fa-eye"></i><span class="clientCount">1</span>
+        </div>
+      </div>
+      <div class="chat">
+        <form>
+          <div class="username-submit">
+            <input placeholder="username" name="user" id="user" required>
+            <button type="submit">Envoyer</button>
+          </div>
+          <div>
+            <input placeholder="message" name="message" id="message" required>
+          </div>
+        </form>
+        <ul class="chat"></ul>
+      </div>
+    </div>
+  </main>
   <script src="/socket.io/socket.io.js"></script>
   <script>
+    const clientCountEl = document.querySelector('.clientCount')
+    const chatForm = document.querySelector("form")
+    const chatList = document.querySelector('ul.chat')
     const canvas = document.querySelector('#mainCanvas')
     const ctx = canvas.getContext('2d');
     const ctx_data = ctx.createImageData(160, 144);
+
+    const userInput = document.querySelector('input[name="user"]')
+    userInput.value = localStorage.getItem('username') ?? ""
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault()
+      const formData = new FormData(chatForm)
+      for (const entry of formData.entries()) {
+        if(entry === "") return
+      }
+      localStorage.setItem('username', userInput.value)
+      const toSend = {}
+      formData.forEach((value, key) => toSend[key] = value);
+      socket.emit("chat", toSend)
+    })
 
     const socket = io();
     socket.on('frame', (data) => {
@@ -22,7 +65,6 @@
       ctx.putImageData(ctx_data, 0, 0);
     })
     socket.on('diff', (data) => {
-      console.log(data)
       for (let i = 0; i < data.length; i+= 2){
         for(let j = 0; j < data[i + 1].length; j++) {
           ctx_data.data[data[i + 1][j]] = data[i];
@@ -30,6 +72,27 @@
       }
       ctx.putImageData(ctx_data, 0, 0);
     })
+    socket.on('chat history', (data) => {
+      data.forEach(data => {
+        const li = document.createElement('li')
+        li.textContent = `${data.user}: ${data.message}`
+        chatList.appendChild(li)
+      })
+      chatList.scrollTo({
+        top: chatList.scrollHeight,
+        behavior: "smooth"
+      })
+    })
+    socket.on('chat', (data) => {
+      const li = document.createElement('li')
+      li.textContent = `${data.user}: ${data.message}`
+      chatList.appendChild(li)
+      chatList.scrollTo({
+        top: chatList.scrollHeight,
+        behavior: "smooth"
+      })
+    })
+    socket.on("viewer join", (clientCount) => clientCountEl.textContent = clientCount)
   </script>
 </body>
 </html>

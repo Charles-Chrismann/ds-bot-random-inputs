@@ -5,8 +5,8 @@ const inputs = [
   "DOWN",
   "A",
   "B",
-  "SELECT",
-  "START"
+  // "SELECT",
+  // "START"
 ]
 
 export default inputs
