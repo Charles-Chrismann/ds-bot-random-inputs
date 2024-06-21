@@ -50,6 +50,18 @@ class GbaEmulatorWrapper {
     this.gba.runStable()
   }
 
+  async flashBackup() {
+    this.gba.pause()
+    const freeze = this.gba.freeze() as any
+
+    const ser = Serializer.serialize(freeze)
+    const data = 'data:application/octet-stream;base64,' + encode(new Uint8Array(await ser.arrayBuffer()))
+
+    this.gba.runStable()
+
+    return data
+  }
+
   async loadBackup(memory: string) {
     this.canvas = createCanvas(240, 160)
     this.resetGba()
