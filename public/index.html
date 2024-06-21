@@ -84,10 +84,21 @@
     socket.on('diff', (data) => {
       for (let i = 0; i < data.length; i += 2){
         const { r, g, b } = hexToRgb(data[i])
-        for(const index of data[i + 1]) {
-          ctx_data.data[index] = r
-          ctx_data.data[index + 1] = g
-          ctx_data.data[index + 2] = b
+        const indexData = data[i + 1]
+        
+        for (let j = 0; j < indexData.length; j += 1){
+          if(Array.isArray(indexData[j])) {
+            const [firstIndex, range] = indexData[j]
+            for (let k = 0; k < range + 1; k += 1){
+              ctx_data.data[firstIndex + k * 4] = r
+              ctx_data.data[firstIndex + k * 4 + 1] = g
+              ctx_data.data[firstIndex + k * 4 + 2] = b
+            }
+          } else {
+            ctx_data.data[indexData[j]] = r
+            ctx_data.data[indexData[j] + 1] = g
+            ctx_data.data[indexData[j] + 2] = b
+          }
         }
       }
       ctx.putImageData(ctx_data, 0, 0)

@@ -2,7 +2,6 @@ import express from "express"
 import sanitizer from 'sanitizer'
 import fileService from "./services/file.service"
 import io from "./io.server"
-import GbaEmulatorWrapper from "./GbaEmulatorWrapper"
 import appService from "./services/app.service"
 
 const app = express()
