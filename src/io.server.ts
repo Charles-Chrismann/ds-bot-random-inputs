@@ -3,6 +3,7 @@ import sanitizer from 'sanitizer'
 import { AppService, FileService } from "./services"
 import HTTPServer from "./http.server"
 import EmulatorWrapper from "./EmulatorWrapper"
+import { computeFrameDiff } from "./services/utils.service"
 
 const io = new Server(HTTPServer)
 let lastSentFrame : number[] | null = null
@@ -35,7 +36,7 @@ function startWsInterval() {
       io.emit('diff', lastSentFrame)
     } else {
       const current = AppService.emu.getScreen()
-      const diff = EmulatorWrapper.computeFrameDiff(lastSentFrame, current)
+      const diff = computeFrameDiff(lastSentFrame, current)
       if(diff.length) io.emit('diff', diff)
       lastSentFrame = current
     }

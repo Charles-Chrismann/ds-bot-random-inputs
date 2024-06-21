@@ -16,10 +16,7 @@ class GbaEmulatorWrapper {
   constructor() {
     this.resetGba()
 
-    if(process.env.NODE_ENV !== "production")setInterval(async () => {
-      let keypad = this.gba.keypad;
-      keypad.press(keypad.A);
-      
+    if(process.env.NODE_ENV !== "production") setInterval(async () => {
       await this.render()
     }, 200);
   }

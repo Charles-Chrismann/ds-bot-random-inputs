@@ -49,24 +49,6 @@ class EmulatorWrapper {
     clearInterval(this.updateIntervalId)
   }
 
-  static computeFrameDiff(currentFrame: number[], newFrame: number[]) {
-    const startArray: number[][] = Array.from({ length: 256 }, e => Array() )
-    for(let i = 0; i < newFrame.length; i++) {
-      if(newFrame[i] !== currentFrame[i]) {
-        startArray[newFrame[i]].push(i)
-      }
-    }
-
-    const returnArray = [] as (number | number[])[]
-    for(let i = 0; i < startArray.length; i+= 1) {
-      if(startArray[i].length) {
-        returnArray.push(i)
-        returnArray.push(startArray[i])
-      }
-    }
-    return returnArray
-  }
-
   async render() {
     const canvas = createCanvas(160, 144)
     const ctx = canvas.getContext('2d')
