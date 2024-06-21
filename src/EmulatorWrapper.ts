@@ -2,8 +2,7 @@ import { createCanvas } from '@napi-rs/canvas'
 import * as fs from 'fs'
 import Gameboy from 'serverboy'
 import GameBoyCore from 'serverboy/src/gameboy_core/gameboy.js'
-
-const rom = fs.readFileSync('./pr.gb')
+import fileService from './services/file.service'
 
 class EmulatorWrapper {
   gameboy: typeof Gameboy
@@ -12,7 +11,7 @@ class EmulatorWrapper {
 
   constructor() {
     this.gameboy = new Gameboy()
-    this.gameboy.loadRom(rom)
+    this.gameboy.loadRom(fileService.rom)
   }
 
   get deepGameboy(): typeof GameBoyCore {
@@ -25,7 +24,7 @@ class EmulatorWrapper {
 
   public loadBackup(memory: any[]) {
     this.gameboy = new Gameboy()
-    this.gameboy.loadRom(rom)
+    this.gameboy.loadRom(fileService.rom)
     this.deepGameboy.saving(memory)
     this.skipFrames(100)
   }

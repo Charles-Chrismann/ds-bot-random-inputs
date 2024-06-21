@@ -11,7 +11,7 @@ let wsIntervalId: NodeJS.Timeout | null = null
 io.on('connection', (socket) => {
   if(io.engine.clientsCount === 1) startWsInterval()
   console.log('user connected')
-  socket.emit('frame', lastSentFrame ?? AppService.emu.gameboy.getScreen())
+  socket.emit('frame', lastSentFrame ?? AppService.emu.getScreen())
 
   io.emit("viewer join", io.engine.clientsCount)
   io.emit("chat history", FileService.chat)
@@ -31,10 +31,10 @@ io.on('connection', (socket) => {
 function startWsInterval() {
   wsIntervalId = setInterval(() => {
     if(!lastSentFrame) {
-      lastSentFrame = AppService.emu.gameboy.getScreen()
+      lastSentFrame = AppService.emu.getScreen()
       io.emit('diff', lastSentFrame)
     } else {
-      const current = AppService.emu.gameboy.getScreen()
+      const current = AppService.emu.getScreen()
       const diff = EmulatorWrapper.computeFrameDiff(lastSentFrame, current)
       if(diff.length) io.emit('diff', diff)
       lastSentFrame = current

@@ -10,7 +10,7 @@
 <body>
   <main>
     <div class="canvasContainer">
-      <canvas id="mainCanvas" width="160" height="144"></canvas>
+      <canvas id="mainCanvas" width="240" height="160"></canvas>
     </div>
     <div class="bottom">
       <div class="viewer-data">
@@ -39,7 +39,7 @@
     const chatList = document.querySelector('ul.chat')
     const canvas = document.querySelector('#mainCanvas')
     const ctx = canvas.getContext('2d');
-    const ctx_data = ctx.createImageData(160, 144);
+    const ctx_data = ctx.createImageData(240, 160);
 
     const userInput = document.querySelector('input[name="user"]')
     userInput.value = localStorage.getItem('username') ?? ""
@@ -53,7 +53,13 @@
       localStorage.setItem('username', userInput.value)
       const toSend = {}
       formData.forEach((value, key) => toSend[key] = value);
-      socket.emit("chat", toSend)
+      fetch('/api/chat', {
+        method: 'POST',
+        body: JSON.stringify(toSend),
+        headers: {
+          'Content-Type': "application/json"
+        }
+      })
     })
 
     const socket = io();
@@ -73,6 +79,7 @@
       ctx.putImageData(ctx_data, 0, 0);
     })
     socket.on('chat history', (data) => {
+      while(chatList.firstElementChild) chatList.firstElementChild.remove()
       data.forEach(data => {
         const li = document.createElement('li')
         li.textContent = `${data.user}: ${data.message}`

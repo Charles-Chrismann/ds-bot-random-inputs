@@ -5,9 +5,10 @@ import EmulatorWrapper from "../EmulatorWrapper";
 import express from "express";
 import { INPUTS } from "../constants";
 import Gameboy from 'serverboy'
+import GbaEmulatorWrapper from "../GbaEmulatorWrapper";
 
 class AppService {
-  emu = new EmulatorWrapper()
+  emu = new GbaEmulatorWrapper()
   webApp = express()
   backupAndSendJob = new CronJob(
     '0 * * * * *',
@@ -21,16 +22,21 @@ class AppService {
   );
 
   constructor() {
-    FileService.loadBackupIfNotExist(this.emu)
+    this.setup()
+  }
+
+  async setup() {
+    await FileService.loadBackupIfExist(this.emu)
     FileService.createChatFileIfNotExist()
 
-    setInterval(() => {
-      const input = INPUTS[Math.floor(Math.random()*INPUTS.length)];
-      for(let i = 0; i < 19; i++) {
-        this.emu.gameboy.pressKey(Gameboy.KEYMAP[input])
-        this.emu.gameboy.doFrame()
-      }
-    }, 100)
+    this.emu.startRandomInputsSession()
+    // setInterval(() => {
+    //   const input = INPUTS[Math.floor(Math.random()*INPUTS.length)];
+    //   for(let i = 0; i < 19; i++) {
+    //     this.emu.gameboy.pressKey(Gameboy.KEYMAP[input])
+    //     this.emu.gameboy.doFrame()
+    //   }
+    // }, 100)
   }
 }
 

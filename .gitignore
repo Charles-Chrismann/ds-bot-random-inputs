@@ -3,6 +3,10 @@ node_modules
 dist
 
 pr.gb
+PS.gba
 
 generated/*
 !generated/.gitkeep
+
+roms/*
+!roms/.gitkeep
