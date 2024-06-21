@@ -1,3 +1,4 @@
+import { deflate } from "node:zlib";
 import { Server } from "socket.io"
 import sanitizer from 'sanitizer'
 import { AppService, FileService } from "./services"
@@ -37,7 +38,15 @@ function startWsInterval() {
     } else {
       const current = AppService.emu.getScreen()
       const diff = computeFrameDiff(lastSentFrame, current)
-      if(diff.length) io.emit('diff', diff)
+      if(diff.length) {
+        deflate(JSON.stringify(diff), (err, buffer) => {
+          if (err) {
+            console.error('An error occurred:', err);
+            process.exitCode = 1;
+          }
+          io.emit('diff', buffer)
+        })
+      }
       lastSentFrame = current
     }
   }, 100)

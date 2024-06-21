@@ -82,7 +82,6 @@ function getRandomInt(max: number) {
 
 
 function computeFrameDiff(currentFrame: number[], newFrame: number[]) {
-  // const hexArray = [] as ((string | (number  | number[]))[])[]
   const hexArray = [] as (string | (number | number[])[])[]
   for(let i = 0; i < currentFrame.length; i += 4) {
     if(
@@ -91,11 +90,8 @@ function computeFrameDiff(currentFrame: number[], newFrame: number[]) {
       || currentFrame[i+2] !== newFrame[i+2]
     ) {
       const index = hexArray.findIndex(v => v === rgbToHex(newFrame[i], newFrame[i + 1], newFrame[i + 2]))
-      // la couleur existe
       if(index !== -1) {
-        // a : tableau compress
         const a = hexArray[index + 1] as (number | number[])[];
-        // le dernier elemenet du tableau est une array
         if(Array.isArray(a[a.length - 1])) {
           const lastElArray = a[a.length - 1]  as number[]
           if(lastElArray[0] + 4 + lastElArray[1] * 4 === i) lastElArray[1] = lastElArray[1] + 1
@@ -105,19 +101,10 @@ function computeFrameDiff(currentFrame: number[], newFrame: number[]) {
           if(lastElNumber === i - 4) a[a.length - 1] = [lastElNumber, 1]
           else a.push(i)
         }
-        // if(a.length === 1) {
-        //   a.push(1)
-        // } else a[1] = a[1] + 1
-        // console.log(a)
-        // if(typeof a === "number") {
-        //   hexArray[index + 1] = [a, 2]
-        // } else if(Array.isArray(a) && typeof a[1] === "number") a[1] = a[1] + 1
-        // (hexArray[index + 1] as number[]).push(i)
       } else {
         hexArray.push(rgbToHex(newFrame[i], newFrame[i + 1], newFrame[i + 2]), [i])
       }
     }
-    // console.log(hexArray)
   }
 
   return hexArray
