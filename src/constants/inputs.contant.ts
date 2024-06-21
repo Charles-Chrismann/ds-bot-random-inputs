@@ -4,7 +4,7 @@ const DIRECTION_LUCK = 4 * 4
 const DIRECTION_RANGE_MAX = 4
 
 const A_LUCK = 10
-const B_LUCK = 5
+const B_LUCK = 10
 
 const inputs = [
   {
